@@ -1,0 +1,808 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+    <meta charset="utf-8" /> <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width" /> <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" /> <!-- Use the latest (edge) version of IE rendering engine -->
+    <meta name="x-apple-disable-message-reformatting" />  <!-- Disable auto-scale in iOS 10 Mail entirely -->
+    <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+
+    <!-- Web Font / @font-face : BEGIN -->
+    <!-- NOTE: If web fonts are not required, lines 10 - 27 can be safely removed. -->
+
+    <!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+    <!--[if mso]>
+        <style>
+            * {
+                font-family: sans-serif !important;
+            }
+        </style>
+    <![endif]-->
+
+    <!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2013/02/webfont-support-in-email/ -->
+    <!--[if !mso]><!-->
+        <!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> -->
+    <!--<![endif]-->
+
+    <!-- Web Font / @font-face : END -->
+
+    <!-- CSS Reset -->
+    <style>
+
+        /* What it does: Remove spaces around the email design added by some email clients. */
+        /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+        html,
+        body {
+            margin: 0 auto !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        /* What it does: Stops email clients resizing small text. */
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* What it does: Centers email on Android 4.4 */
+        div[style*="margin: 16px 0"] {
+            margin:0 !important;
+        }
+
+        /* What it does: Stops Outlook from adding extra spacing to tables. */
+        table,
+        td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+
+        /* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin: 0 auto !important;
+        }
+        table table table {
+            table-layout: auto;
+        }
+
+        /* What it does: Uses a better rendering method when resizing images in IE. */
+        img {
+            -ms-interpolation-mode:bicubic;
+        }
+
+        /* What it does: A work-around for iOS meddling in triggered links. */
+        *[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        /* What it does: A work-around for Gmail meddling in triggered links. */
+        .x-gmail-data-detectors,
+        .x-gmail-data-detectors *,
+        .aBn {
+            border-bottom: 0 !important;
+            cursor: default !important;
+        }
+
+        /* What it does: Prevents Gmail from displaying an download button on large, non-linked images. */
+        .a6S {
+	        display: none !important;
+	        opacity: 0.01 !important;
+        }
+        /* If the above doesn't work, add a .g-img class to any image in question. */
+        img.g-img + div {
+	        display:none !important;
+	   	}
+
+        /* What it does: Prevents underlining the button text in Windows 10 */
+        .button-link {
+            text-decoration: none !important;
+        }
+
+        /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+        /* Create one of these media queries for each additional viewport size you'd like to fix */
+        /* Thanks to Eric Lepetit @ericlepetitsf) for help troubleshooting */
+        @media only screen and (min-device-width: 375px) and (max-device-width: 413px) { /* iPhone 6 and 6+ */
+            .email-container {
+                min-width: 375px !important;
+            }
+        }
+
+    </style>
+
+    <!-- Progressive Enhancements -->
+    <style>
+
+        /* What it does: Hover styles for buttons */
+        .button-td, .button-a {
+            transition: all 100ms ease-in;
+        }
+        .button-td:hover,
+        .button-a:hover {
+            background: #555555 !important;
+            border-color: #555555 !important;
+        }
+
+    .center-on-narrow {                
+        text-align: center !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                float: none !important;
+        }
+        /* Media Queries */
+        @media screen and (max-width: 480px) {
+
+            /* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
+            .fluid {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+
+            /* What it does: Forces table cells into full-width rows. */
+            .stack-column,
+            .stack-column-center {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                direction: ltr !important;
+            }
+            /* And center justify these ones. */
+            .stack-column-center {
+                text-align: center !important;
+            }
+
+            /* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
+            .center-on-narrow {
+                text-align: center !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                float: none !important;
+            }
+            table.center-on-narrow {
+                display: inline-block !important;
+            }
+        }
+
+    </style>
+
+<link href="http://fonts.googleapis.com/css?family=ABeeZee" type="text/css" rel="stylesheet" /><style type="text/css">
+* {font-family: 'ABeeZee' !important;}.center-on-narrow1 {        text-align: center !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                float: none !important;
+}
+.center-on-narrow1 {                text-align: center !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                float: none !important;
+}
+</style></head>
+<body width="100%" bgcolor="#E1E1E1" style="margin: 0; mso-line-height-rule: exactly;">
+    <center style="width: 100%; background: #E1E1E1; text-align: left;">
+
+        <!-- Visually Hidden Preheader Text : BEGIN -->
+        <div style="display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family: sans-serif;">
+            Multimedia Technology Offical Email
+        </div>
+        <!-- Visually Hidden Preheader Text : END -->
+
+        <!--
+            Set the email width. Defined in two places:
+            1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 680px.
+            2. MSO tags for Desktop Windows Outlook enforce a 680px width.
+            Note: The Fluid and Responsive templates have a different width (600px). The hybrid grid is more "fragile", and I've found that 680px is a good width. Change with caution.
+        -->
+        <div style="max-width: 680px; margin: auto;" class="email-container">
+            <!--[if mso]>
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="680" align="center">
+            <tr>
+            <td>
+            <![endif]-->
+               
+    <!------------------------------------------------------------- Delete here in index ----------------------------------------------------------------------------> 
+    
+    <!-- Email Header : BEGIN -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+      <tbody><tr>
+        <td style="padding: 10px 0; text-align: center;font-family:Helvetica, helvetica neue, Arial, 'sans-serif';"><a style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-size: 15px; font-weight: 100; text-decoration: none; color: #d9005B;" href="http://www.mmt.com.au/multimedia-today/180410/">Something wrong? click here.</a></td>
+      </tr>
+    </tbody></table>
+    <!-- Email Header : END --> 
+    <!------------------------------------------------------------- Delete here in index end ----------------------------------------------------------------------------> 
+    
+
+            <!-- Email Body : BEGIN -->
+            <map name="MapMapMap">
+    
+  <area shape="circle" coords="20,15,13" href="http://www.youtube.com/user/mmtcomau" alt="Youtube" />
+  <area shape="circle" coords="48,15,13" href="https://www.facebook.com/AskMultimedia/" alt="Facebook" />
+  <area shape="circle" coords="75,15,13" href="https://www.linkedin.com/company-beta/554279/" alt="Linkedin" />
+  <area shape="circle" coords="100,15,13" href="http://www.mmt.com.au" alt="MMT Website" />
+
+  </map><table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+
+                <!-- Hero Image, Flush : BEGIN -->
+                <tbody><tr>
+                    <td bgcolor="#ffffff">
+                      <img src="http://www.mmt.com.au/multimedia-today/171121/header2.jpg" usemap="#MapMapMap" width="680" height="" alt="alt_text" border="0" align="center" class="fluid" style="width: 100%; max-width: 680px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" />
+                    </td>
+                </tr>
+   
+                <!-- Hero Image, Flush : END -->
+
+                
+                <!-- 1 Column Text + Button : BEGIN -->
+                <tr>
+                    <td bgcolor="#ffffff">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tbody><tr>
+                              <td style=" text-align: left; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                                <a style="text-decoration: none; font-size: 10px">Date 10 April 2018</a></td>
+                            </tr>
+                            <tr>
+                           	  <td style=" text-align: center; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+                               	<a href="http://www.mmt.com.au/" style=" font-size: 12px">Home</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="http://www.mmt.com.au/search/?promo=all" style=" font-size: 12px">Promotions</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="http://www.mmt.com.au/search/?clearance=" style=" font-size: 12px">Clearance</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="http://www.mmt.com.au/search/?n=" style=" font-size: 12px">New this week</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="http://www.mmt.com.au/articles/" style=" font-size: 12px">Articles</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href="http://www.mmt.com.au/about-us/contact-us/" style=" font-size: 12px">Contact us</a>
+
+                            	</td>
+                            </tr>
+                        </tbody></table>
+                    </td>
+                </tr>
+
+              <!-- 3 Even Columns : BEGIN -->
+                <tr>
+                    <td bgcolor="#ffffff" align="center" height="100%" valign="top" width="100%" style="padding: 10px 0;">
+                        <!--[if mso]>
+                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                        <tr>
+                        <td align="center" valign="top" width="660">
+                        <![endif]-->
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:660px;">
+                            <tbody><tr>
+                                <td align="center" valign="top" style="font-size:0;">
+                                    <!--[if mso]>
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                                    <tr>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=&amp;category=&amp;search=infinity+board&amp;stype=1"><img src="http://www.mmt.com.au/multimedia-today/180410/img/NEC.jpg" width="200" border="0" alt="Netcomm" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 15px;  color: #555555; padding-top: 10px; font-weight: bold; vertical-align:top" class="stack-column-center">Collaborate with Ease</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center"> A powerful  all-in-one panel for meeting rooms with a natural writing experience, it’s like working on paper!</td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=&amp;category=&amp;search=synbun&amp;stype=1"><img src="http://www.mmt.com.au/multimedia-today/180410/img/synology.jpg" width="200" border="0" alt="philips" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-weight: bold; font-family: sans-serif; font-size: 15px; color: #555555; padding-top: 10px;" class="stack-column-center">Save when you Bundle</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center"> We know that with any NAS the right hard drive is essential. Learn how much you can save when you bundle.</td>
+                                                        </tr>
+                                                  </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/product/?name=13VPLPHZ10"><img src="http://www.mmt.com.au/multimedia-today/180410/img/sony.jpg" width="200" border="0" alt="NVidia" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 15px; color: #555555; padding-top: 10px; font-weight: bold; vertical-align:top" class="stack-column-center">Get in before it's gone</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Cost effective  with 20,000 hours of virtually no maintenance. Save over $200 when you buy during <strong>April</strong>. </td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                   
+                                    </tr>
+                                    </table>
+                                    <![endif]-->
+                                </td>
+                            </tr>
+                        </tbody></table>
+                        <!--[if mso]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]-->
+                    </td>
+                </tr>
+                <!-- 3 Even Columns : END -->
+                <!-- 3 Even Columns : BEGIN -->
+                <tr>
+                    <td bgcolor="#ffffff" align="center" height="100%" valign="top" width="100%" style="padding: 10px 0;">
+                        <!--[if mso]>
+                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                        <tr>
+                        <td align="center" valign="top" width="660">
+                        <![endif]-->
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:660px;">
+                            <tbody><tr>
+                                <td align="center" valign="top" style="font-size:0;">
+                                    <!--[if mso]>
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                                    <tr>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/product/?name=15L-20HR000VAU"><img src="http://www.mmt.com.au/multimedia-today/180410/img/lenovo.jpg" width="200" border="0" alt="HP" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-weight: bold; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Hot Price On Lenovo<a style="color:#FF0000"></a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">  Just 1.14 kg &amp; 15.95 mm thin, has an Intel  Core i5 processor, 8GB ram and 256GB SSD it is perfect for traveling</td>
+                                                        </tr>
+                                                  </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="text-align: left;">
+                                                        
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=FUJITSU&amp;category=&amp;search=8th+gen&amp;stype=1&amp;view=1&amp;sort=age"><img src="http://www.mmt.com.au/multimedia-today/180410/img/fujitsu.jpg" width="200" border="0" alt="BenQ" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 15px; color: #555555; padding-top: 10px; font-weight: bold; vertical-align:top" class="stack-column-center">New 8th Gen Intel</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center"> The New Fujitsu Lifebook range with 8th Gen intel core processors are now available at MMT. </td>
+                                                        </tr>
+                                                  </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    
+                                    <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=J5CREATE&amp;category=&amp;search=jda&amp;stype=1&amp;view=1&amp;sort=age"><img src="http://www.mmt.com.au/multimedia-today/180410/img/J5.jpg" width="200" border="0" alt="Power Shield" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-weight: bold; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Adapt to every Application</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">With a vast range of new and affordable J5create adapter, connect up to display application with ease. </td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    </tr>
+                                    </table>
+                                    <![endif]-->
+                                </td>
+                            </tr>
+                        </tbody></table>
+                        <!--[if mso]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]-->
+                    </td>
+                </tr>
+                <!-- 3 Even Columns : END -->
+
+                <!-- 3 Even Columns : BEGIN -->
+                <tr>
+                    <td bgcolor="#ffffff" align="center" height="100%" valign="top" width="100%" style="padding: 10px 0;">
+                        <!--[if mso]>
+                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                        <tr>
+                        <td align="center" valign="top" width="660">
+                        <![endif]-->
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:660px;">
+                            <tbody><tr>
+                                <td align="center" valign="top" style="font-size:0;">
+                                    <!--[if mso]>
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                                    <tr>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=&amp;category=&amp;search=shinpoc&amp;stype=1"><img src="http://www.mmt.com.au/multimedia-today/180410/img/shintaro.jpg" width="200" height="200" border="0" alt="D-Link" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-weight: bold; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Hot Price on 8GB USBs</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center"> When you buy a minimum of 100x  8GB Usb drives get them for  $4.95 each. Perfect for schools &amp; education.</td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=&amp;category=&amp;search=freeg225&amp;stype=1&amp;view=1&amp;sort=age&amp;bundle="><img src="http://www.mmt.com.au/multimedia-today/180410/img/D-link.jpg" width="200" border="0" alt="Gumdrop" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-weight: bold; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Get a Bonus Modem Router</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Buy a unified service router get a free N300 modem. Perfect for  cloud based applications. </td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                                    <div style="display:inline-block; margin: 0 -2px; max-width:33.33%; min-width:220px; vertical-align:top; width:100%;" class="stack-column">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tbody><tr>
+                                                <td style="padding: 5px 10px;">
+                                                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 13px;text-align: left;">
+                                                        <tbody><tr>
+                                                            <td><a href="http://www.mmt.com.au/search/?manufacturer=OKI&amp;category=&amp;search=oki&amp;stype=1&amp;view=1&amp;sort=age"><img src="http://www.mmt.com.au/multimedia-today/180410/img/oki.jpg" width="250" border="0" alt="Fujtisu" class="center-on-narrow" style="width: 100%; max-width: 200px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-weight: bold; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Oki Demo Month</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="font-family: sans-serif; font-size: 11px; line-height: 20px; color: #555555; padding-top: 10px;" class="stack-column-center">Learn how you can save up to 50% on selected printers this demo month with OKI. Hurry Ends 30/04/18</td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </div>
+                                    <!--[if mso]>
+                                    </td>
+                                    </tr>
+                                    </table>
+                                    <![endif]-->
+                                </td>
+                            </tr>
+                        </tbody></table>
+                        <!--[if mso]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]-->
+                    </td>
+                </tr>
+                <!-- 3 Even Columns : END -->
+                <!-- Hero Image, Flush : BEGIN -->
+                <tr>
+                    <td bgcolor="#ffffff"><a href="http://www.mmt.com.au/search/?manufacturer=&amp;category=&amp;search=toughbook&amp;stype=1"><img src="http://www.mmt.com.au/multimedia-today/180410/img/banner.jpg" width="600" height="187" alt="XYZ Printing" border="0" align="center" class="fluid" style="width: 100%; max-width: 680px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" /></a>
+                    </td>
+                </tr>
+                <!-- Hero Image, Flush : END -->
+                <!-- Hero Image, Flush : BEGIN -->
+                <tr>
+                    <td bgcolor="#ffffff">
+                      <img src="http://www.mmt.com.au/multimedia-today/171205/footer.jpg" width="680" height="" alt="alt_text" border="0" align="center" class="fluid" style="width: 100%; max-width: 680px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 13px; line-height: 20px; color: #555555;" />
+                    </td>
+                </tr>
+                <!-- Hero Image, Flush : END -->
+            </tbody></table>
+            <!-- Email Body : END -->
+
+    <!----------------------------------------- Delete begin -------------------------------------------------> 
+    
+    <!-- 3 Even Columns : BEGIN -->
+    
+
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+      <tbody><tr>
+        <td align="center" height="100%" valign="top" width="100%"><!--[if mso]>
+                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                        <tr>
+                        <td align="center" valign="top" width="660">
+                        <![endif]-->
+          
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:660px;">
+            <tbody><tr>
+              <td align="center" valign="top" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-size:0;"><!--[if mso]>
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                                    <tr>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                
+                <div style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';display:inline-block; margin: 0 -5px; max-width:33.33%; min-width:210px; vertical-align:top; width:100%;" class="stack-column">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tbody><tr>
+                      <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 10px 10px;"><table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-size: 14px;text-align: left;">
+                          <tbody><tr>
+                            <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 10px 10px;width: 33.33%;font-size: 12px; font-family:Helvetica, Arial, 'sans-serif'; line-height:18px; text-align: center; color: #555;" class="x-gmail-data-detectors"><webversion style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';color:#dcdcff; text-decoration:underline; "></webversion>
+                              <table border="0" cellspacing="0" cellpadding="0">
+                                <tbody><tr>
+                                  <td><strong style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 18px; line-height: 19px;">Melbourne Office</strong></td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px">93 Heatherdale Road</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px">Ringwood VIC 3134</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Phone</strong>: (03) 9837 2500 </td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Fax</strong>: (03) 9837 2555 </td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';color: #888; font-size: 12px; line-height: 13px"><strong>Email</strong>: <a style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';text-decoration: none" href="mailto:sales@mmt.com.au">sales@mmt.com.au</a></td>
+                                </tr>
+                              </tbody></table></td>
+                          </tr>
+                        </tbody></table></td>
+                    </tr>
+                  </tbody></table>
+                </div>
+                
+                <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                
+                <div style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';display:inline-block; margin: 0 -5px; max-width:33.33%; min-width:210px; vertical-align:top; width:100%;" class="stack-column">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tbody><tr>
+                      <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 10px 10px;"><table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-size: 14px;text-align: left;">
+                          <tbody><tr>
+                            <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 10px 10px;width: 33.33%;font-size: 12px; font-family:Helvetica, Arial, 'sans-serif'; line-height:18px; text-align: center; color: #555;" class="x-gmail-data-detectors"><webversion style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';color:#dcdcff; text-decoration:underline; "></webversion>
+                              <table border="0" cellspacing="0" cellpadding="0">
+                                <tbody><tr>
+                                  <td><strong style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 18px; line-height: 19px">Sydney Office</strong></td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px">Unit 3, 2-6 Orion Road</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px">Lane Cove NSW 2066</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Phone</strong>: (02) 8962 4800</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Fax</strong>: (02) 8962 4888</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Email</strong>: <a style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';text-decoration: none" href="mailto:syd@mmt.com.au">syd@mmt.com.au </a></td>
+                                </tr>
+                              </tbody></table></td>
+                          </tr>
+                        </tbody></table></td>
+                    </tr>
+                  </tbody></table>
+                </div>
+                
+                <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="220">
+                                    <![endif]-->
+                
+                <div style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';display:inline-block; margin: 0 -5px; max-width:33.33%; min-width:210px; vertical-align:top; width:100%;" class="stack-column">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tbody><tr>
+                      <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 10px 10px;"><table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-size: 14px;text-align: left;">
+                          <tbody><tr>
+                            <td style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 10px 10px;width: 33.33%;font-size: 12px; font-family:Helvetica, Arial, 'sans-serif'; line-height:18px; text-align: center; color: #555;" class="x-gmail-data-detectors"><webversion style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';color:#dcdcff; text-decoration:underline; "></webversion>
+                              <table border="0" cellspacing="0" cellpadding="0">
+                                <tbody><tr>
+                                  <td><strong style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';; font-size: 18px; line-height: 19px; color:#888">Brisbane Office</strong></td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px">5/49 Butterfield Street</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px">Herston QLD 4006</td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Phone</strong>: (07) 3360 8000 </td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Fax</strong>: (07) 3360 8050 </td>
+                                </tr>
+                                <tr>
+                                  <td style="font-family: Helvetica, helvetica neue, Arial, 'sans-serif'; color: #888; font-size: 12px; line-height: 13px"><strong>Email</strong>: <a style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';text-decoration: none" href="mailto:bris@mmt.com.au">bris@mmt.com.au</a></td>
+                                </tr>
+                              </tbody></table></td>
+                          </tr>
+                        </tbody></table></td>
+                    </tr>
+                  </tbody></table>
+                </div>
+                
+                <!--[if mso]>
+                                    </td>
+                                    </tr>
+                                    </table>
+                                    <![endif]--></td>
+            </tr>
+          </tbody></table>
+          
+          <!--[if mso]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]--></td>
+      </tr>
+    </tbody></table>
+    
+    <!-- 3 Even Columns : END --> 
+    <!----------------------------------------- Delete end -------------------------------------------------> 
+    
+    <!----------------------------------------- keep begin -------------------------------------------------> 
+    <!-- Thumbnail Right, Text Left : BEGIN -->
+    <span style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 0 50px 0px 10px;"></span>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+      <tbody><tr> 
+        <!-- dir=rtl is where the magic happens. This can be changed to dir=ltr to swap the alignment on wide while maintaining stack order on narrow. -->
+        <td dir="rtl" align="center" height="100%" valign="top" width="100%" style="padding-top: 2px; padding-bottom: 2px"><!--[if mso]>
+                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                        <tr>
+                        <td align="center" valign="top" width="660">
+                        <![endif]-->
+          
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" width="100%" style="max-width:660px;">
+            <tbody><tr>
+              <td align="center" valign="top" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-size:0; padding: 10px 0;"><!--[if mso]>
+                                    <table role="presentation" border="0" cellspacing="0" cellpadding="0" align="center" width="660">
+                                    <tr>
+                                    <td align="left" valign="top" width="120">
+                                    <![endif]-->
+                
+                <div style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';display:inline-block; margin: 0 -2px; max-width: 120px; min-width:90px; vertical-align:top; width:100%;" class="stack-column">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tbody><tr>
+                      <td dir="ltr" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';padding: 0 50px 0px 10px;"><img src="http://www.mmt.com.au/articles/shintaro/170913/img/logo.png" width="90" height="" border="0" alt="Alt Text" class="center-on-narrow1" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';width: 100%; max-width: 90px; height: auto;  font-size: 13px; line-height: 17px; color: #555555;" /></td>
+                    </tr>
+                  </tbody></table>
+                </div>
+                
+                <!--[if mso]>
+                                    </td>
+                                    <td align="left" valign="top" width="540">
+                                    <![endif]-->
+                
+                <div style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';display:inline-block; margin: 0 -2px; max-width:70%; min-width:390px; vertical-align:top;" class="stack-column">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tbody><tr>
+                      <td dir="ltr" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';font-family:Helvetica, Arial, 'sans-serif'; font-size: 10px; line-height: 15px; color: #888; padding: 10px 10px 0; text-align: center;" class="center-on-narrow"><table align="center" cellpadding="0" cellspacing="0" border="0" style="font-family:Helvetica, helvetica neue, Arial, 'sans-serif';text-align: center">
+                          <tbody><tr>
+                            <td style="font-size: 12px; line-height: 13px"> Please note that all pricing quoted is EXCLUDING GST.</td>
+                          </tr>
+                          <tr>
+                            <td style="font-size: 12px; line-height: 13px"> All care has been taken to ensure the accuracy of the information provided within.</td>
+                          </tr>
+                          <tr>
+                            <td style="font-size: 12px; line-height: 13px"> Errors and omissions excepted.</td>
+                          </tr>
+                        </tbody></table>
+                        <br /></td>
+                    </tr>
+                  </tbody></table>
+                </div>
+                
+                <!--[if mso]>
+                                    </td>
+                                    </tr>
+                                    </table>
+                                    <![endif]--></td>
+            </tr>
+          </tbody></table>
+          
+          <!--[if mso]>
+                        </td>
+                        </tr>
+                        </table>
+                        <![endif]--></td>
+      </tr>
+    </tbody></table>
+    
+    <!-- Thumbnail Right, Text Left : END --> 
+
+            <!--[if mso]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
+        </div>
+    </center>
+
+
+</body></html>
